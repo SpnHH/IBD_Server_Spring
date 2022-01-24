@@ -13,6 +13,8 @@ public class PersonMapper implements RowMapper<Person> {
     public Person mapRow(ResultSet rs) throws SQLException {
         var id = UUID.fromString(rs.getString("id"));
         var name = rs.getString("name");
-        return new Person(id,name);
+        var role = rs.getString("role");
+        var link = rs.getString("link");
+        return new Person(id,name, role, link);
     }
 }

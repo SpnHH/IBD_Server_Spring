@@ -14,7 +14,7 @@ public class FakePersonDataAccessService implements PersonDao{
     private static List<Person> DB = new ArrayList<>();
     @Override
     public int insertPerson(UUID id, Person person) {
-        DB.add(new Person(id,person.getName()));
+        DB.add(new Person(id,person.getName(), person.getRole(), person.getLink()));
         return 0;
     }
 
@@ -44,11 +44,16 @@ public class FakePersonDataAccessService implements PersonDao{
                 .map(person -> {
                     int indexPersonToDelete = DB.indexOf(person);
                     if(indexPersonToDelete >= 0){
-                        DB.set(indexPersonToDelete, new Person(id, updatePerson.getName()));
+                        DB.set(indexPersonToDelete, new Person(id, updatePerson.getName(), updatePerson.getRole(), updatePerson.getLink()));
                         return 1;
                     }
                     return 0;
                 }).orElse( 0);
+    }
+
+    @Override
+    public Optional<Person> getPersonByName(String name) {
+        return Optional.empty();
     }
 
 

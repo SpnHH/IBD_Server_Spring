@@ -19,7 +19,7 @@ public interface PersonDao {
     List<Person> selectAllPersons();
     int deletePersonById(UUID id);
     int updatePersonById(UUID id, Person person);
-
+    Optional<Person> getPersonByName(String name);
 
 
 }
