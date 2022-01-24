@@ -19,4 +19,6 @@ public class LinkByName {
     public String getName2() {
         return name2;
     }
+
+
 }
