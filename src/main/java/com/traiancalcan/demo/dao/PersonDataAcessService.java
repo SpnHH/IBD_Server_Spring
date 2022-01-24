@@ -1,10 +1,8 @@
 package com.traiancalcan.demo.dao;
 
 import com.traiancalcan.demo.model.Person;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -43,13 +41,15 @@ public class PersonDataAcessService implements PersonDao{
 
     @Override
     public List<Person> selectAllPersons() {
-        final  String sql = "SELECT id, name FROM person";
+        final  String sql = "SELECT id, name, role, link FROM person";
         return jdbcTemplate.query(sql, new RowMapper<Person>() {
             @Override
             public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
                 var id = UUID.fromString(rs.getString("id"));
                 var name = rs.getString("name");
-                return new Person(id,name);
+                var role = rs.getString("role");
+                var link = rs.getString("link");
+                return new Person(id,name, role, link);
             }
         });
 
@@ -67,5 +67,15 @@ public class PersonDataAcessService implements PersonDao{
     public int updatePersonById(UUID id, Person person) {
         String sql = "Update person SET name = ? WHERE id = ?";
         return jdbcTemplate.update(sql, person.getName(), id);
+    }
+
+    @Override
+    public Optional<Person> getPersonByName(String name) {
+        for(Person person: selectAllPersons()){
+            if(person.getName().equals(name)){
+                return Optional.ofNullable(person);
+            }
+        }
+        return Optional.empty();
     }
 }
