@@ -205,6 +205,9 @@ public void postReq(JSONObject jsonObject) throws Exception {
         String str = EntityUtils.toString(ent);
         JSONParser parser = new JSONParser();
         sendingPostRequest(urls.getMLURL(), (JSONObject) parser.parse(str));
+    }else{
+        //print err
+        System.out.println("err");
     }
 }
 }
