@@ -23,7 +23,9 @@ public class PersonController{
 
     @PostMapping
     public void addPerson(@NonNull @RequestBody Person person){
-        personService.addPerson(person);
+        if(personService.getPersonByName(person.getName()).isEmpty()) {
+            personService.addPerson(person);
+        }
     }
 
     @GetMapping

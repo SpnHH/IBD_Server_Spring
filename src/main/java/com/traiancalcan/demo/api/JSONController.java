@@ -6,6 +6,18 @@ import com.traiancalcan.demo.service.LinkService;
 import com.traiancalcan.demo.service.PersonService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,7 +73,8 @@ public class JSONController {
         jsonObject.put("username", name);
 
         try {
-            sendingPostRequestWithArgs("http://167a-188-25-3-123.ngrok.io"+ name);
+//            sendingPostRequest("http://167a-188-25-3-123.ngrok.io",jsonObject);
+            postReq(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -108,6 +121,7 @@ public class JSONController {
         try(OutputStream os = con.getOutputStream()) {
             byte[] input = jsonInputString.toString().getBytes(StandardCharsets.UTF_8);
             os.write(input, 0, input.length);
+//            osw.write(jsonInputString.toString());
         }
         // For POST only - END
 
@@ -158,7 +172,41 @@ public class JSONController {
         }
     }
 
+//    public void postReq(JSONObject jsonObject) throws IOException {
+//        CloseableHttpClient client = HttpClients.createDefault();
+//        HttpPost httpPost = new HttpPost("http://7c03-188-25-3-123.ngrok.io");
+//
+//        StringEntity entity = new StringEntity(jsonObject.toString());
+//        httpPost.setEntity(entity);
+//        httpPost.setHeader("Accept", "application/json");
+//        httpPost.setHeader("Content-type", "application/json");
+//
+//
+//        CloseableHttpResponse response = client.execute(httpPost);
+//        if(response.getStatusLine().getStatusCode() == 200){ // do sth};
+//            client.close();
+//            HttpEntity ent = response.getEntity();
+//            String str = EntityUtils.toString(ent);
+//            var y = 0;
+//    }
+public void postReq(JSONObject jsonObject) throws Exception {
+    HttpClient client =new DefaultHttpClient();
+    HttpPost httpPost = new HttpPost("http://7c03-188-25-3-123.ngrok.io");
 
+    StringEntity entity = new StringEntity(jsonObject.toString());
+    httpPost.setEntity(entity);
+    httpPost.setHeader("Accept", "application/json");
+    httpPost.setHeader("Content-type", "application/json");
+
+
+    HttpResponse response = client.execute(httpPost);
+    if(response.getStatusLine().getStatusCode() == 200){ // do sth};
+        HttpEntity ent = response.getEntity();
+        String str = EntityUtils.toString(ent);
+        JSONParser parser = new JSONParser();
+        sendingPostRequest(urls.getMLURL(), (JSONObject) parser.parse(str));
+    }
+}
 }
 
 

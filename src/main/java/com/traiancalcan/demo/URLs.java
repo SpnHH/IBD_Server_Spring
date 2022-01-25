@@ -1,12 +1,19 @@
 package com.traiancalcan.demo;
 
 public class URLs {
-    private final String ScrapperURL;
-    private final String MLURL;
+    private  String ScrapperURL;
+    private  String MLURL;
 
     public URLs() {
-        ScrapperURL = "";
-        MLURL = "";
+        ScrapperURL = "http://7c03-188-25-3-123.ngrok.io";
+        MLURL = "http://0f81-5-12-162-14.ngrok.io";
     }
 
+    public String getScrapperURL() {
+        return ScrapperURL;
+    }
+
+    public String getMLURL() {
+        return MLURL;
+    }
 }
