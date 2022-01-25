@@ -8,9 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository("postgres")
 public class PersonDataAcessService implements PersonDao{
@@ -71,8 +69,10 @@ public class PersonDataAcessService implements PersonDao{
 
     @Override
     public Optional<Person> getPersonByName(String name) {
-        for(Person person: selectAllPersons()){
-            if(person.getName().equals(name)){
+        List<Person> personList = new ArrayList<>();
+        personList = selectAllPersons();
+        for(Person person: personList){
+            if(person.getName().toLowerCase(Locale.ROOT).equals(name.toLowerCase(Locale.ROOT))){
                 return Optional.ofNullable(person);
             }
         }
