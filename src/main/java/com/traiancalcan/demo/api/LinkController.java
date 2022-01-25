@@ -64,7 +64,6 @@ public class LinkController {
         if((p1 != null) && (p2 != null)){
             linkService.addLink(p1,p2);
         }
-
     }
 
 }
