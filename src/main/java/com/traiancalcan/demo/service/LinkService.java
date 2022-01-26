@@ -20,8 +20,11 @@ public class LinkService {
     }
 
     public int addLink(Person person1, Person person2){
+
         return linkDao.createLink(person1,person2);
     }
+
+
     public List<Link> getLinkByPersonLink(UUID id){
         var links = linkDao.getAllLinks();
         List<Link> retList = new ArrayList<>();

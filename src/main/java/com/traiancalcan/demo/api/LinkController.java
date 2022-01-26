@@ -5,6 +5,7 @@ import com.traiancalcan.demo.model.LinkByName;
 import com.traiancalcan.demo.model.Person;
 import com.traiancalcan.demo.service.LinkService;
 import com.traiancalcan.demo.service.PersonService;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +38,9 @@ public class LinkController {
 
     @GetMapping(path ="{name}")
     @ResponseBody
-    public List<String> getLinksByName(@PathVariable("name") String name){
+    public JSONObject getLinksByName(@PathVariable("name") String name){
         List<String> retList = new ArrayList<>();
+        List<String> retList2 = new ArrayList<>();
         Optional<Person> p = personService.getPersonByName(name);
         if(p.isEmpty()){
             return null;
@@ -49,21 +51,42 @@ public class LinkController {
             var x2 = personService.getPersonById(link.getPerson2());
             if(x1.get().getName().equals(p.get().getName())){
                 retList.add(x2.get().getName());
+                retList2.add(x2.get().getLink());
             }else{
                 retList.add(x1.get().getName());
+                retList2.add(x1.get().getLink());
             }
         }
-        return retList;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name",retList);
+        jsonObject.put("link",retList2);
+        return jsonObject;
     }
 
 
     @PostMapping
-    public void addLink(@NonNull @RequestBody LinkByName link){
+    public String addLink(@NonNull @RequestBody LinkByName link){
         Person p1 = personService.getPersonByName(link.getName1()).get();
         Person p2 = personService.getPersonByName(link.getName2()).get();
-        if((p1 != null) && (p2 != null)){
-            linkService.addLink(p1,p2);
+        var linkListForP1 = linkService.getLinkByPersonLink(p1.getId());
+        var linkListForP2 = linkService.getLinkByPersonLink(p1.getId());
+        boolean alreadyExist = false;
+        for(var x:linkListForP1){
+            for(var y:linkListForP2){
+                if(x.getPerson1() == y.getPerson2()){
+                    alreadyExist = true;
+                    break;
+                }
+                if(alreadyExist == true){
+                    break;
+                }
+            }
         }
+        if((p1 != null) && (p2 != null) &&(alreadyExist == false)){
+            linkService.addLink(p1,p2);
+            return "Succes";
+        }
+        return "Failed to add link";
     }
 
 }

@@ -22,8 +22,9 @@ public class PersonDataAcessService implements PersonDao{
 
     @Override
     public int insertPerson(UUID id, Person person) {
-        final String sql = "INSERT INTO person (id, name)" + "VALUES(?,?)";
-        jdbcTemplate.update(sql, id, person.getName());
+        final String sql = "INSERT INTO person (id, name, link)" + "VALUES(?,?,?)";
+        String brainMapLink = "https://www.brainmap.ro/" + person.getName().toLowerCase(Locale.ROOT).replaceAll("\\s", "-");
+        jdbcTemplate.update(sql, id, person.getName(), brainMapLink);
         return 1;
     }
 
