@@ -67,21 +67,30 @@ public class JSONController {
 
     @GetMapping(path = "{name}")
     public JSONObject writeName(@NonNull @PathVariable("name") String name)  {
-        name = name.toLowerCase(Locale.ROOT);
-        name = name.replaceAll("\\s","-");
+        String str = new String();
+        str = name.toLowerCase(Locale.ROOT);
+        str = str.replaceAll("\\s","-");
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("username", name);
+        jsonObject.put("username", str);
 
         try {
-//            sendingPostRequest("http://167a-188-25-3-123.ngrok.io",jsonObject);
             postReq(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return jsonObject;
+        JSONObject retJSON = new JSONObject();
+        JSONParser parser = new JSONParser();
+
+        try {
+            retJSON = sendGetRequest("http://localhost:8080/api/v1/link/" +name.replaceAll("\\s","%20"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return retJSON;
     }
 
-    public int sendGetRequest(String url) throws IOException {
+    public JSONObject sendGetRequest(String url) throws IOException {
+        JSONObject retJSON = new JSONObject();
         String USER_AGENT = "Mozilla/5.0";
         String GET_URL = url;
         URL obj = new URL(GET_URL);
@@ -103,10 +112,19 @@ public class JSONController {
 
             // print result
             System.out.println(response.toString());
+            JSONParser jsonParser = new JSONParser();
+            try {
+                retJSON = (JSONObject) jsonParser.parse(response.toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return retJSON;
         } else {
             System.out.println("GET request not worked");
+            System.out.println(responseCode);
+            return retJSON;
         }
-        return responseCode;
+
 
     }
 
@@ -191,7 +209,7 @@ public class JSONController {
 //    }
 public void postReq(JSONObject jsonObject) throws Exception {
     HttpClient client =new DefaultHttpClient();
-    HttpPost httpPost = new HttpPost("http://7c03-188-25-3-123.ngrok.io");
+    HttpPost httpPost = new HttpPost(urls.getScrapperURL());
 
     StringEntity entity = new StringEntity(jsonObject.toString());
     httpPost.setEntity(entity);
